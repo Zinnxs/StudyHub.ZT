@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zinnxs OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #050505;
+            --bg-secondary: #0b0b0b;
+            --bg-card: #0f0f0f;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --accent-green: #005d30;
+            --accent-green-bright: #00ff7f;
+            --border-color: #1a1a1a;
+            --glow-green: rgba(0, 255, 127, 0.3);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Grid Pattern Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 93, 48, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 93, 48, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Scanline Effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                transparent 0%,
+                rgba(0, 255, 127, 0.01) 50%,
+                transparent 100%
+            );
+            background-size: 100% 4px;
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Navbar HUD */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: rgba(11, 11, 11, 0.95);
+            border-bottom: 1px solid var(--accent-green);
+            box-shadow: 0 0 20px var(--glow-green);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: var(--accent-green-bright);
+            text-shadow: 0 0 10px var(--glow-green);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            color: #fff;
+            text-shadow: 0 0 20px var(--accent-green-bright);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 8px 16px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-green-bright);
+            border-color: var(--accent-green);
+            box-shadow: 0 0 10px var(--glow-green);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(15, 15, 15, 0.98);
+            border: 1px solid var(--accent-green);
+            min-width: 200px;
+            box-shadow: 0 4px 20px rgba(0, 255, 127, 0.2);
+            z-index: 1001;
+            margin-top: 8px;
+        }
+
+        .nav-item:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-content a {
+            color: var(--text-primary);
+            padding: 12px 20px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--accent-green);
+            color: #fff;
+            padding-left: 25px;
+        }
+
+        .clock {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            color: var(--accent-green-bright);
+            text-shadow: 0 0 8px var(--glow-green);
+            font-weight: 600;
+        }
+
+        /* Main Grid */
+        .main-grid {
+            margin-top: 80px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1fr;
+            gap: 20px;
+            max-width: 1800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Card Styles */
+        .widget {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .widget:hover {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 20px rgba(0, 255, 127, 0.15);
+        }
+
+        .widget-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--accent-green-bright);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid var(--accent-green);
+            padding-bottom: 8px;
+        }
+
+        /* Flash Effect for Navigation */
+        @keyframes flashGreen {
+            0%, 100% { box-shadow: 0 0 0 rgba(0, 255, 127, 0); }
+            50% { box-shadow: 0 0 30px rgba(0, 255, 127, 0.8), inset 0 0 20px rgba(0, 255, 127, 0.3); }
+        }
+
+        .flash-target {
+            animation: flashGreen 1s ease-in-out 2;
+        }
+
+        /* Bible Card */
+        .bible-card {
+            background: linear-gradient(135deg, var(--accent-green) 0%, #003d20 100%);
+            border: 2px solid var(--accent-green-bright);
+            text-align: center;
+            padding: 30px;
+        }
+
+        .bible-btn {
+            display: inline-block;
+            background: #fff;
+            color: var(--accent-green);
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .bible-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 255, 255, 0.3);
+            background: var(--accent-green-bright);
+            color: #000;
+        }
+
+        /* Textarea */
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 15px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 15px;
+            resize: vertical;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 10px var(--glow-green);
+        }
+
+        .code-textarea {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+
+        /* Todo Lists */
+        .todo-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .todo-input {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 15px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 15px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .todo-input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 10px var(--glow-green);
+        }
+
+        .btn {
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--accent-green-bright);
+            color: #000;
+            box-shadow: 0 0 15px var(--glow-green);
+        }
+
+        .todo-list {
+            list-style: none;
+        }
+
+        .todo-item {
+            background: var(--bg-secondary);
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--accent-green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .todo-item:hover {
+            background: #151515;
+            padding-left: 20px;
+        }
+
+        .delete-btn {
+            background: #661111;
+            color: #ff6b6b;
+            border: none;
+            padding: 5px 12px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .delete-btn:hover {
+            background: #ff6b6b;
+            color: #000;
+        }
+
+        /* Pomodoro Timer */
+        .pomodoro-container {
+            text-align: center;
+        }
+
+        .timer-display {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 20px auto;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.3s linear;
+            transform-origin: 50% 50%;
+        }
+
+        .timer-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--accent-green-bright);
+            text-shadow: 0 0 15px var(--glow-green);
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* Quick Log */
+        .log-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .log-list {
+            max-height: 300px;
+            overflow-y: auto;
+            background: var(--bg-secondary);
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .log-item {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: var(--accent-green-bright);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        /* Spotify */
+        .spotify-container iframe {
+            width: 100%;
+            height: 380px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Docs Grid */
+        .docs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .doc-link {
+            background: var(--bg-secondary);
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .doc-link:hover {
+            background: var(--accent-green);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px var(--glow-green);
+        }
+
+        /* Calculator */
+        .calculator {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            width: 280px;
+            background: rgba(15, 15, 15, 0.98);
+            border: 2px solid var(--accent-green);
+            border-radius: 8px;
+            box-shadow: 0 8px 30px rgba(0, 255, 127, 0.3);
+            display: none;
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+
+        .calculator.active {
+            display: block;
+        }
+
+        .calc-header {
+            background: var(--accent-green);
+            padding: 12px;
+            cursor: move;
+            border-radius: 6px 6px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .calc-title {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 14px;
+        }
+
+        .calc-close {
+            background: #661111;
+            color: #ff6b6b;
+            border: none;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+
+        .calc-close:hover {
+            background: #ff6b6b;
+            color: #000;
+        }
+
+        .calc-display {
+            background: var(--bg-secondary);
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            text-align: right;
+            color: var(--accent-green-bright);
+            border-bottom: 1px solid var(--border-color);
+            min-height: 60px;
+            word-wrap: break-word;
+        }
+
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border-color);
+            padding: 1px;
+        }
+
+        .calc-btn {
+            background: var(--bg-card);
+            border: none;
+            padding: 20px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .calc-btn:hover {
+            background: var(--accent-green);
+            color: #fff;
+        }
+
+        .calc-btn.operator {
+            background: #1a1a1a;
+            color: var(--accent-green-bright);
+        }
+
+        .calc-btn.equals {
+            background: var(--accent-green);
+            color: #fff;
+            grid-column: span 2;
+        }
+
+        .calc-btn.clear {
+            background: #661111;
+            color: #ff6b6b;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-green-bright);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-menu {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar HUD -->
+    <nav class="navbar">
+        <a href="https://zinnxs.github.io/VirtualCard.zn/" class="logo" target="_blank">ZINNXS TECH</a>
+        
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link">Teologia</a>
+                <div class="dropdown-content">
+                    <a href="#bible-card" class="nav-scroll">Bíblia YouVersion</a>
+                    <a href="#exegesis" class="nav-scroll">Caderno de Exegese</a>
+                    <a href="#reading-goals" class="nav-scroll">Metas de Leitura</a>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">Dev Lab</a>
+                <div class="dropdown-content">
+                    <a href="#scratchpad" class="nav-scroll">JS Scratchpad</a>
+                    <a href="#dev-tasks" class="nav-scroll">Task Queue</a>
+                    <a href="#docs" class="nav-scroll">Docs Rápidas</a>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">Tools</a>
+                <div class="dropdown-content">
+                    <a href="#" id="open-calc">Calculadora</a>
+                    <a href="#" id="reset-data">Resetar Dados</a>
+                </div>
+            </li>
+        </ul>
+
+        <div class="clock" id="clock">00:00:00</div>
+    </nav>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+        <!-- Coluna Esquerda: Teologia -->
+        <div class="column-left">
+            <div class="widget bible-card" id="bible-card">
+                <h2 class="widget-title">📖 Bíblia Sagrada</h2>
+                <p style="margin-bottom: 15px; font-size: 16px;">Acesse a Palavra de Deus no YouVersion</p>
+                <a href="https://www.bible.com/pt/bible/129/LUK.14.NVI" class="bible-btn" target="_blank">Abrir Bíblia</a>
+            </div>
+
+            <div class="widget" id="exegesis">
+                <h2 class="widget-title">📝 Caderno de Exegese</h2>
+                <textarea id="exegesis-notes" placeholder="Suas anotações teológicas e estudos bíblicos..."></textarea>
+            </div>
+
+            <div class="widget" id="reading-goals">
+                <h2 class="widget-title">🎯 Metas de Leitura</h2>
+                <div class="todo-input-group">
+                    <input type="text" class="todo-input" id="reading-input" placeholder="Nova meta de leitura...">
+                    <button class="btn" id="add-reading">Adicionar</button>
+                </div>
+                <ul class="todo-list" id="reading-list"></ul>
+            </div>
+        </div>
+
+        <!-- Coluna Central: Foco & Controle -->
+        <div class="column-center">
+            <div class="widget">
+                <h2 class="widget-title">⏱️ Pomodoro Timer</h2>
+                <div class="pomodoro-container">
+                    <div class="timer-display">
+                        <svg class="progress-ring" width="220" height="220">
+                            <circle
+                                class="progress-ring-circle"
+                                stroke="rgba(0, 93, 48, 0.3)"
+                                stroke-width="8"
+                                fill="transparent"
+                                r="100"
+                                cx="110"
+                                cy="110"
+                            />
+                            <circle
+                                class="progress-ring-circle"
+                                id="progress-circle"
+                                stroke="#00ff7f"
+                                stroke-width="8"
+                                fill="transparent"
+                                r="100"
+                                cx="110"
+                                cy="110"
+                                style="stroke-dasharray: 628.318; stroke-dashoffset: 0;"
+                            />
+                        </svg>
+                        <div class="timer-text" id="timer-display">25:00</div>
+                    </div>
+                    <div class="timer-controls">
+                        <button class="btn" id="timer-start">Iniciar</button>
+                        <button class="btn" id="timer-pause">Pausar</button>
+                        <button class="btn" id="timer-reset">Resetar</button>
+                        <button class="btn" id="preset-25">25m</button>
+                        <button class="btn" id="preset-5">5m</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget">
+                <h2 class="widget-title">💭 Quick Log</h2>
+                <div class="log-input-group">
+                    <input type="text" class="todo-input" id="log-input" placeholder="Digite uma ideia rápida...">
+                    <button class="btn" id="add-log">Log</button>
+                </div>
+                <div class="log-list" id="log-list"></div>
+            </div>
+
+            <div class="widget spotify-container">
+                <h2 class="widget-title">🎵 Música</h2>
+                <iframe src="https://open.spotify.com/embed/playlist/4cwnHX3jRNhFwpz8Ifa1DS?utm_source=generator&theme=0" frameborder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+        </div>
+
+        <!-- Coluna Direita: Dev Environment -->
+        <div class="column-right">
+            <div class="widget" id="scratchpad">
+                <h2 class="widget-title">⚡ JS Scratchpad</h2>
+                <textarea id="js-notes" class="code-textarea" placeholder="// Seu código JavaScript aqui..."></textarea>
+            </div>
+
+            <div class="widget" id="dev-tasks">
+                <h2 class="widget-title">📋 Task Queue (Dev)</h2>
+                <div class="todo-input-group">
+                    <input type="text" class="todo-input" id="dev-input" placeholder="Nova tarefa de desenvolvimento...">
+                    <button class="btn" id="add-dev">Adicionar</button>
+                </div>
+                <ul class="todo-list" id="dev-list"></ul>
+            </div>
+
+            <div class="widget" id="docs">
+                <h2 class="widget-title">📚 Docs Rápidas</h2>
+                <div class="docs-grid">
+                    <a href="https://developer.mozilla.org/pt-BR/" class="doc-link" target="_blank">MDN Docs</a>
+                    <a href="https://stackoverflow.com/" class="doc-link" target="_blank">Stack Overflow</a>
+                    <a href="https://react.dev/" class="doc-link" target="_blank">React Docs</a>
+                    <a href="https://github.com/" class="doc-link" target="_blank">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calculator (Draggable) -->
+    <div class="calculator" id="calculator">
+        <div class="calc-header" id="calc-header">
+            <div class="calc-title">Calculadora</div>
+            <button class="calc-close" id="calc-close-btn">×</button>
+        </div>
+        <div class="calc-display" id="calc-display">0</div>
+        <div class="calc-buttons">
+            <button class="calc-btn clear" data-value="C">C</button>
+            <button class="calc-btn operator" data-value="/">/</button>
+            <button class="calc-btn operator" data-value="*">×</button>
+            <button class="calc-btn operator" data-value="-">-</button>
+            <button class="calc-btn" data-value="7">7</button>
+            <button class="calc-btn" data-value="8">8</button>
+            <button class="calc-btn" data-value="9">9</button>
+            <button class="calc-btn operator" data-value="+">+</button>
+            <button class="calc-btn" data-value="4">4</button>
+            <button class="calc-btn" data-value="5">5</button>
+            <button class="calc-btn" data-value="6">6</button>
+            <button class="calc-btn" data-value="0">0</button>
+            <button class="calc-btn" data-value="1">1</button>
+            <button class="calc-btn" data-value="2">2</button>
+            <button class="calc-btn" data-value="3">3</button>
+            <button class="calc-btn" data-value=".">.</button>
+            <button class="calc-btn equals" data-value="=">=</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CLOCK ====================
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ==================== NAVIGATION & FLASH ====================
+        document.querySelectorAll('.nav-scroll').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    setTimeout(() => {
+                        targetElement.classList.add('flash-target');
+                        setTimeout(() => {
+                            targetElement.classList.remove('flash-target');
+                        }, 2000);
+                    }, 500);
+                }
+            });
+        });
+
+        // ==================== LOCALSTORAGE UTILITIES ====================
+        function saveToStorage(key, value) {
+            localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(key, defaultValue = '') {
+            return localStorage.getItem(key) || defaultValue;
+        }
+
+        function saveArrayToStorage(key, array) {
+            localStorage.setItem(key, JSON.stringify(array));
+        }
+
+        function loadArrayFromStorage(key) {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : [];
+        }
+
+        // ==================== EXEGESIS NOTES ====================
+        const exegesis = document.getElementById('exegesis-notes');
+        exegesis.value = loadFromStorage('exegesis-notes');
+        exegesis.addEventListener('input', () => {
+            saveToStorage('exegesis-notes', exegesis.value);
+        });
+
+        // ==================== JS SCRATCHPAD ====================
+        const jsScratchpad = document.getElementById('js-notes');
+        jsScratchpad.value = loadFromStorage('js-notes');
+        jsScratchpad.addEventListener('input', () => {
+            saveToStorage('js-notes', jsScratchpad.value);
+        });
+
+        // ==================== TODO LISTS ====================
+        function createTodoSystem(inputId, btnId, listId, storageKey) {
+            const input = document.getElementById(inputId);
+            const btn = document.getElementById(btnId);
+            const list = document.getElementById(listId);
+            
+            let todos = loadArrayFromStorage(storageKey);
+            
+            function renderTodos() {
+                list.innerHTML = '';
+                todos.forEach((todo, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'todo-item';
+                    li.innerHTML = `
+                        <span>${todo}</span>
+                        <button class="delete-btn" data-index="${index}">Excluir</button>
+                    `;
+                    list.appendChild(li);
+                });
+                
+                document.querySelectorAll(`#${listId} .delete-btn`).forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = this.getAttribute('data-index');
+                        todos.splice(index, 1);
+                        saveArrayToStorage(storageKey, todos);
+                        renderTodos();
+                    });
+                });
+            }
+            
+            function addTodo() {
+                const value = input.value.trim();
+                if (value) {
+                    todos.push(value);
+                    saveArrayToStorage(storageKey, todos);
+                    input.value = '';
+                    renderTodos();
+                }
+            }
+            
+            btn.addEventListener('click', addTodo);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addTodo();
+            });
+            
+            renderTodos();
+        }
+
+        createTodoSystem('reading-input', 'add-reading', 'reading-list', 'reading-goals');
+        createTodoSystem('dev-input', 'add-dev', 'dev-list', 'dev-tasks');
+
+        // ==================== QUICK LOG ====================
+        const logInput = document.getElementById('log-input');
+        const logBtn = document.getElementById('add-log');
+        const logList = document.getElementById('log-list');
+        
+        let logs = loadArrayFromStorage('quick-logs');
+        
+        function renderLogs() {
+            logList.innerHTML = '';
+            logs.slice().reverse().forEach(log => {
+                const div = document.createElement('div');
+                div.className = 'log-item';
+                div.innerHTML = `<span class="log-time">${log.time}</span><span>${log.text}</span>`;
+                logList.appendChild(div);
+            });
+        }
+        
+        function addLog() {
+            const value = logInput.value.trim();
+            if (value) {
+                const now = new Date();
+                const time = `[${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}]`;
+                logs.push({ time, text: value });
+                saveArrayToStorage('quick-logs', logs);
+                logInput.value = '';
+                renderLogs();
+            }
+        }
+        
+        logBtn.addEventListener('click', addLog);
+        logInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addLog();
+        });
+        
+        renderLogs();
+
+        // ==================== POMODORO TIMER ====================
+        let timerInterval = null;
+        let timeRemaining = 25 * 60; // seconds
+        let isRunning = false;
+        const timerDisplay = document.getElementById('timer-display');
+        const progressCircle = document.getElementById('progress-circle');
+        const circumference = 2 * Math.PI * 100;
+        
+        progressCircle.style.strokeDasharray = circumference;
+        progressCircle.style.strokeDashoffset = 0;
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            timerDisplay.textContent = display;
+            document.title = `(${display}) Zinnxs OS`;
+            
+            const totalTime = parseInt(loadFromStorage('timer-total', 25 * 60));
+            const progress = 1 - (timeRemaining / totalTime);
+            const offset = circumference * progress;
+            progressCircle.style.strokeDashoffset = offset;
+        }
+        
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                timerInterval = setInterval(() => {
+                    if (timeRemaining > 0) {
+                        timeRemaining--;
+                        updateTimerDisplay();
+                    } else {
+                        pauseTimer();
+                        alert('⏰ Tempo esgotado!');
+                    }
+                }, 1000);
+            }
+        }
+        
+        function pauseTimer() {
+            isRunning = false;
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+        
+        function resetTimer() {
+            pauseTimer();
+            timeRemaining = parseInt(loadFromStorage('timer-total', 25 * 60));
+            updateTimerDisplay();
+        }
+        
+        function setPreset(minutes) {
+            pauseTimer();
+            timeRemaining = minutes * 60;
+            saveToStorage('timer-total', timeRemaining);
+            updateTimerDisplay();
+        }
+        
+        document.getElementById('timer-start').addEventListener('click', startTimer);
+        document.getElementById('timer-pause').addEventListener('click', pauseTimer);
+        document.getElementById('timer-reset').addEventListener('click', resetTimer);
+        document.getElementById('preset-25').addEventListener('click', () => setPreset(25));
+        document.getElementById('preset-5').addEventListener('click', () => setPreset(5));
+        
+        updateTimerDisplay();
+
+        // ==================== CALCULATOR ====================
+        const calculator = document.getElementById('calculator');
+        const calcDisplay = document.getElementById('calc-display');
+        let calcCurrentValue = '0';
+        let calcPreviousValue = null;
+        let calcOperation = null;
+        
+        document.getElementById('open-calc').addEventListener('click', (e) => {
+            e.preventDefault();
+            calculator.classList.add('active');
+        });
+        
+        document.getElementById('calc-close-btn').addEventListener('click', () => {
+            calculator.classList.remove('active');
+        });
+        
+        // Draggable Calculator
+        let isDragging = false;
+        let dragOffsetX = 0;
+        let dragOffsetY = 0;
+        
+        const calcHeader = document.getElementById('calc-header');
+        
+        calcHeader.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            dragOffsetX = e.clientX - calculator.offsetLeft;
+            dragOffsetY = e.clientY - calculator.offsetTop;
+            calculator.style.cursor = 'grabbing';
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                calculator.style.left = (e.clientX - dragOffsetX) + 'px';
+                calculator.style.top = (e.clientY - dragOffsetY) + 'px';
+                calculator.style.right = 'auto';
+            }
+        });
+        
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            calculator.style.cursor = 'default';
+        });
+        
+        // Calculator Logic
+        document.querySelectorAll('.calc-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const value = this.getAttribute('data-value');
+                handleCalculator(value);
+            });
+        });
+        
+        function handleCalculator(value) {
+            if (value === 'C') {
+                calcCurrentValue = '0';
+                calcPreviousValue = null;
+                calcOperation = null;
+            } else if (value === '=') {
+                if (calcOperation && calcPreviousValue !== null) {
+                    const prev = parseFloat(calcPreviousValue);
+                    const curr = parseFloat(calcCurrentValue);
+                    let result = 0;
+                    
+                    switch(calcOperation) {
+                        case '+': result = prev + curr; break;
+                        case '-': result = prev - curr; break;
+                        case '*': result = prev * curr; break;
+                        case '/': result = prev / curr; break;
+                    }
+                    
+                    calcCurrentValue = String(result);
+                    calcPreviousValue = null;
+                    calcOperation = null;
+                }
+            } else if (['+', '-', '*', '/'].includes(value)) {
+                if (calcPreviousValue !== null && calcOperation) {
+                    // Chain operations
+                    const prev = parseFloat(calcPreviousValue);
+                    const curr = parseFloat(calcCurrentValue);
+                    let result = 0;
+                    
+                    switch(calcOperation) {
+                        case '+': result = prev + curr; break;
+                        case '-': result = prev - curr; break;
+                        case '*': result = prev * curr; break;
+                        case '/': result = prev / curr; break;
+                    }
+                    
+                    calcPreviousValue = String(result);
+                } else {
+                    calcPreviousValue = calcCurrentValue;
+                }
+                calcCurrentValue = '0';
+                calcOperation = value;
+            } else {
+                if (calcCurrentValue === '0' && value !== '.') {
+                    calcCurrentValue = value;
+                } else {
+                    if (value === '.' && calcCurrentValue.includes('.')) {
+                        return;
+                    }
+                    calcCurrentValue += value;
+                }
+            }
+            
+            calcDisplay.textContent = calcCurrentValue;
+        }
+
+        // ==================== RESET DATA ====================
+        document.getElementById('reset-data').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm('⚠️ Tem certeza que deseja resetar todos os dados? Esta ação não pode ser desfeita!')) {
+                localStorage.clear();
+                location.reload();
+            }
+        });
+    </script>
+</body>
+</html>
